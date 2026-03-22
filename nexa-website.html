@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nexa — Beyond Imagination</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#050508;--bg2:#0c0c14;--bgc:#111120;--bgch:#161628;
+  --border:rgba(255,255,255,.07);--borderh:rgba(255,255,255,.15);
+  --t1:#f0f0f8;--t2:#8888a8;--tm:#44445a;
+  --acc:#6c63ff;--accb:#8b84ff;--accg:rgba(108,99,255,.25);--accs:rgba(108,99,255,.08);
+  --gold:#d4a853;--goldg:rgba(212,168,83,.2);
+  --ok:#34d399;--err:#f87171;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;line-height:1.6;cursor:none}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--acc);border-radius:3px}
+::selection{background:var(--acc);color:#fff}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;font-weight:700;line-height:1.1;letter-spacing:-.02em}
+
+/* CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:var(--acc);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s}
+#cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(108,99,255,.5);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:all .12s ease}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:6px;height:6px;background:var(--accb)}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;height:50px;border-color:var(--acc)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.25rem 2rem;transition:all .4s;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(5,5,8,.88);backdrop-filter:blur(24px);border-bottom-color:var(--border)}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,#fff,var(--accb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;border:none;background-color:transparent}
+.nav-links{display:flex;gap:2.5rem;align-items:center}
+.nl{color:var(--t2);font-size:.875rem;font-weight:500;cursor:pointer;transition:color .2s;background:none;border:none;font-family:'DM Sans',sans-serif;letter-spacing:.02em;padding:0}
+.nl:hover,.nl.active{color:var(--t1)}
+.nav-auth{display:flex;gap:.75rem;align-items:center}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.875rem;border-radius:100px;cursor:pointer;transition:all .25s;border:none;text-decoration:none}
+.btn-p{background:var(--acc);color:#fff;padding:.6rem 1.5rem;position:relative;overflow:hidden}
+.btn-p::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,.12));opacity:0;transition:opacity .25s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--accg)}
+.btn-p:hover::before{opacity:1}
+.btn-o{background:transparent;color:var(--t1);padding:.6rem 1.5rem;border:1px solid var(--borderh)}
+.btn-o:hover{border-color:var(--acc);color:var(--accb);transform:translateY(-2px)}
+.btn-g{background:transparent;color:var(--t2);padding:.4rem .875rem;border:none;font-size:.82rem}
+.btn-g:hover{color:var(--t1)}
+.btn-sm{padding:.45rem 1.1rem;font-size:.8rem}
+
+/* PAGES */
+.page{display:none;min-height:100vh;animation:fadeUp .55s ease both}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px var(--accg)}50%{box-shadow:0 0 50px var(--accg),0 0 80px rgba(108,99,255,.1)}}
+@keyframes counterUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+.container{max-width:1280px;margin:0 auto;padding:0 2rem}
+.csm{max-width:860px;margin:0 auto;padding:0 2rem}
+
+/* SECTION LABELS */
+.slbl{font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accb);margin-bottom:.75rem}
+.stitle{font-size:clamp(2.2rem,4vw,3.5rem);font-weight:800;letter-spacing:-.035em}
+.gsub{font-size:1.05rem;color:var(--t2);line-height:1.7}
+.gtxt{background:linear-gradient(135deg,#fff,var(--accb) 50%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.atxt{background:linear-gradient(135deg,var(--accb),#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* CARD */
+.card{background:var(--bgc);border:1px solid var(--border);border-radius:1.5rem;padding:2rem;transition:all .35s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:0;transition:opacity .35s}
+.card:hover{background:var(--bgch);border-color:var(--borderh);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.card:hover::before{opacity:1}
+
+/* PRODUCT CARD */
+.pcard{background:var(--bgc);border:1px solid var(--border);border-radius:1.5rem;overflow:hidden;transition:all .35s cubic-bezier(.25,.46,.45,.94);cursor:pointer}
+.pcard:hover{border-color:rgba(108,99,255,.4);transform:translateY(-6px);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(108,99,255,.2),0 0 60px rgba(108,99,255,.07)}
+.pcard-img{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+
+/* PHONE MOCKUP */
+.pmock{width:90px;height:160px;border-radius:18px;border:2px solid rgba(255,255,255,.15);background:linear-gradient(160deg,#1e1e38,#0d0d20);box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1);position:relative;transition:transform .35s}
+.pcard:hover .pmock{transform:scale(1.06) rotateY(-5deg)}
+.pmock::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);width:30px;height:6px;background:rgba(255,255,255,.1);border-radius:3px}
+.pmock::after{content:'';position:absolute;inset:4px;border-radius:15px;background:linear-gradient(160deg,#1a1a30 0%,#080814 100%)}
+.pmock-inner{position:absolute;inset:4px;border-radius:15px;background:linear-gradient(160deg,#1a1a30,#080814);display:flex;align-items:center;justify-content:center;z-index:1;font-family:'Syne',sans-serif;font-size:.6rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.28rem .7rem;border-radius:100px}
+.b-new{background:rgba(108,99,255,.15);color:var(--accb);border:1px solid rgba(108,99,255,.3)}
+.b-best{background:rgba(52,211,153,.12);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
+.b-coming{background:rgba(212,168,83,.12);color:var(--gold);border:1px solid rgba(212,168,83,.3)}
+
+/* FORM */
+.flbl{display:block;font-size:.85rem;font-weight:500;color:var(--t2);margin-bottom:.45rem}
+.finp{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:.75rem;padding:.85rem 1.2rem;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:.93rem;transition:all .2s;outline:none}
+.finp::placeholder{color:var(--tm)}
+.finp:focus{border-color:var(--acc);background:rgba(108,99,255,.06);box-shadow:0 0 0 3px rgba(108,99,255,.12)}
+textarea.finp{resize:vertical;min-height:130px}
+
+/* SPEC ROW */
+.srow{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--border)}
+.srow:last-child{border-bottom:none}
+.slb{font-size:.82rem;color:var(--tm);min-width:120px}
+.sval{font-size:.88rem;color:var(--t1);font-weight:500;text-align:right}
+
+/* ALERT */
+.alert{padding:.9rem 1.1rem;border-radius:.75rem;font-size:.875rem;font-weight:500;display:none;align-items:center;gap:.5rem;margin-bottom:1rem}
+.alert.show{display:flex}
+.a-ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);color:var(--ok)}
+.a-err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:var(--err)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:4rem 0 2.5rem}
+.flink{color:var(--tm);font-size:.875rem;cursor:pointer;transition:color .2s;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;text-decoration:none}
+.flink:hover{color:var(--t1)}
+
+/* TOAST */
+#toasts{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:.75rem;pointer-events:none}
+.toast{background:var(--bgc);border:1px solid var(--borderh);border-radius:1rem;padding:.9rem 1.4rem;font-size:.85rem;color:var(--t1);pointer-events:all;animation:fadeUp .4s ease both;max-width:300px;box-shadow:0 20px 50px rgba(0,0,0,.5);display:flex;align-items:center;gap:.7rem}
+.t-ok{border-left:3px solid var(--ok)}
+.t-err{border-left:3px solid var(--err)}
+.t-inf{border-left:3px solid var(--accb)}
+
+/* MOBILE MENU */
+.mmenu{position:fixed;inset:0;z-index:998;background:rgba(5,5,8,.97);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;transform:translateX(100%);transition:transform .4s cubic-bezier(.25,.46,.45,.94)}
+.mmenu.open{transform:translateX(0)}
+.mmenu .nl{font-size:1.75rem;font-family:'Syne',sans-serif;font-weight:700}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.g4,.g3,.g2{grid-template-columns:1fr}.nav-links{display:none}.ham{display:flex!important}.container,.csm{padding:0 1.25rem}}
+.ham{display:none;background:none;border:none;color:var(--t1);cursor:pointer;padding:.4rem}
+
+/* DIVIDER */
+.div{height:1px;background:linear-gradient(90deg,transparent,var(--borderh),transparent);margin:0}
+
+/* STAT CARD */
+.statc{text-align:center;padding:1.75rem;border-radius:1.25rem;background:var(--accs);border:1px solid rgba(108,99,255,.12)}
+.statn{font-family:'Syne',sans-serif;font-size:2.25rem;font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#fff,var(--accb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* COLOR DOT */
+.cdot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:all .2s;display:inline-block}
+.cdot:hover,.cdot.on{border-color:var(--acc);transform:scale(1.2)}
+
+/* VARIANT BTN */
+.vbtn{padding:.55rem 1.1rem;border-radius:.6rem;border:1px solid var(--border);background:transparent;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
+.vbtn.on{border-color:var(--acc);background:var(--accs);color:var(--accb)}
+.vbtn:hover{border-color:var(--acc);color:var(--accb)}
+
+/* REVEAL ANIMATION */
+.rev{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rev.vis{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Toast container -->
+<div id="toasts"></div>
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <button class="logo" onclick="goto('home')">◆ Nexa</button>
+    <div class="nav-links" id="navlinks">
+      <button class="nl active" onclick="goto('home')" data-page="home">Home</button>
+      <button class="nl" onclick="goto('products')" data-page="products">Products</button>
+      <button class="nl" onclick="goto('about')" data-page="about">About</button>
+      <button class="nl" onclick="goto('contact')" data-page="contact">Contact</button>
+    </div>
+    <div class="nav-auth" id="navauth">
+      <button class="btn btn-g" onclick="goto('login')">Sign In</button>
+      <button class="btn btn-p btn-sm" onclick="goto('signup')">Get Started</button>
+    </div>
+    <button class="ham" id="hambtn" onclick="toggleMenu()" aria-label="Menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mmenu" id="mmenu">
+  <button style="position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;color:var(--t1);cursor:pointer" onclick="toggleMenu()">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="nl" onclick="goto('home');toggleMenu()">Home</button>
+  <button class="nl" onclick="goto('products');toggleMenu()">Products</button>
+  <button class="nl" onclick="goto('about');toggleMenu()">About</button>
+  <button class="nl" onclick="goto('contact');toggleMenu()">Contact</button>
+  <button class="btn btn-o" onclick="goto('login');toggleMenu()" style="margin-top:1rem">Sign In</button>
+  <button class="btn btn-p" onclick="goto('signup');toggleMenu()">Get Started</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: HOME
+═══════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <section style="min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(108,99,255,.16) 0%,transparent 70%),radial-gradient(ellipse 50% 80% at 80% 50%,rgba(108,99,255,.06) 0%,transparent 60%)"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black,transparent 70%)"></div>
+
+    <div class="container" style="position:relative;z-index:2;padding-top:7rem;padding-bottom:4rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center" id="hero-grid">
+
+        <!-- Text side -->
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);border-radius:100px;padding:.38rem .95rem;margin-bottom:2rem;animation:fadeIn .8s ease both">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--accb);display:inline-block;animation:pulseGlow 2s infinite"></span>
+            <span style="font-size:.76rem;font-weight:700;color:var(--accb);letter-spacing:.07em">Introducing Nexa Ultra</span>
+          </div>
+
+          <h1 style="font-size:clamp(3rem,6vw,5rem);font-weight:800;letter-spacing:-.045em;line-height:1;margin-bottom:1.5rem;animation:fadeUp .7s ease both .1s both">
+            Beyond<br><span class="gtxt">Imagination.</span><br>Beyond Limits.
+          </h1>
+
+          <p style="font-size:1.1rem;color:var(--t2);line-height:1.75;max-width:480px;margin-bottom:2.5rem;animation:fadeUp .7s ease both .2s both">
+            The world's first smartphone with a 60 TOPS AI engine, 200MP quad camera, and 100W ultra-fast charging. This is not just a phone — this is a revolution.
+          </p>
+
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .7s ease both .3s both">
+            <button class="btn btn-p" onclick="goto('products')" style="padding:.8rem 2rem;font-size:.95rem">
+              Explore All Phones
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="btn btn-o" onclick="showDetail('nexa-ultra')" style="padding:.8rem 1.75rem;font-size:.95rem">View Nexa Ultra</button>
+          </div>
+
+          <!-- Stats -->
+          <div style="display:flex;gap:2.5rem;margin-top:3rem;padding-top:2.5rem;border-top:1px solid var(--border);animation:fadeUp .7s ease both .4s both">
+            <div><div class="statn" id="s1">0MP</div><div style="font-size:.75rem;color:var(--tm);margin-top:.2rem">Main Camera</div></div>
+            <div><div class="statn" id="s2">0</div><div style="font-size:.75rem;color:var(--tm);margin-top:.2rem">AI Engine (TOPS)</div></div>
+            <div><div class="statn" id="s3">0W</div><div style="font-size:.75rem;color:var(--tm);margin-top:.2rem">Fast Charge</div></div>
+          </div>
+        </div>
+
+        <!-- Phone visual -->
+        <div style="display:flex;justify-content:center;align-items:center;position:relative;animation:fadeIn .9s ease both .2s both" id="hero-visual">
+          <div style="position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,.18),transparent 70%);filter:blur(40px)"></div>
+          <div style="position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(108,99,255,.1);animation:spin 22s linear infinite"></div>
+          <div style="position:absolute;width:260px;height:260px;border-radius:50%;border:1px solid rgba(108,99,255,.07);animation:spin 15s linear infinite reverse"></div>
+
+          <!-- Floating chips -->
+          <div style="position:absolute;top:8%;right:0;background:var(--bgc);border:1px solid var(--border);border-radius:1rem;padding:.7rem 1rem;animation:float 4.2s ease-in-out infinite;box-shadow:0 10px 30px rgba(0,0,0,.4)">
+            <div style="font-size:.68rem;color:var(--tm);margin-bottom:.2rem">AI Engine</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--accb)">60 TOPS NPU</div>
+          </div>
+          <div style="position:absolute;bottom:20%;left:0;background:var(--bgc);border:1px solid var(--border);border-radius:1rem;padding:.7rem 1rem;animation:float 5s ease-in-out infinite 1s;box-shadow:0 10px 30px rgba(0,0,0,.4)">
+            <div style="font-size:.68rem;color:var(--tm);margin-bottom:.2rem">Charging</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--gold)">100W GaN Ultra</div>
+          </div>
+          <div style="position:absolute;top:58%;right:-1rem;background:var(--bgc);border:1px solid var(--border);border-radius:1rem;padding:.7rem 1rem;animation:float 3.6s ease-in-out infinite .5s;box-shadow:0 10px 30px rgba(0,0,0,.4)">
+            <div style="font-size:.68rem;color:var(--tm);margin-bottom:.2rem">Camera</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--ok)">200MP f/1.4</div>
+          </div>
+
+          <!-- Main phone -->
+          <div style="animation:float 4.8s ease-in-out infinite;position:relative;z-index:2">
+            <div style="width:195px;height:370px;border-radius:40px;border:2.5px solid rgba(255,255,255,.15);background:linear-gradient(160deg,#1e1e38,#0d0d20);box-shadow:0 50px 120px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.1);position:relative;overflow:hidden">
+              <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);width:68px;height:10px;background:rgba(255,255,255,.06);border-radius:5px;z-index:2"></div>
+              <div style="position:absolute;inset:6px;border-radius:35px;background:linear-gradient(160deg,#1a1a30,#080814);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;overflow:hidden">
+                <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#fff,var(--accb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">NEXA</div>
+                <div style="font-size:.5rem;letter-spacing:.28em;color:var(--tm);text-transform:uppercase">Ultra</div>
+                <div style="width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)"></div>
+                <div style="font-size:.5rem;color:var(--tm)">Swipe to unlock</div>
+              </div>
+              <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(to top,rgba(108,99,255,.08),transparent)"></div>
+            </div>
+            <div style="position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);width:130px;height:28px;background:rgba(108,99,255,.2);filter:blur(18px);border-radius:50%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee strip -->
+  <div style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2);overflow:hidden">
+    <div style="display:flex;gap:4rem;padding:1.4rem 0;width:max-content;animation:marquee 24s linear infinite">
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--accb)">◆</span>200MP Quad Camera</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--gold)">◆</span>60 TOPS AI Engine</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--ok)">◆</span>100W Ultra-fast Charging</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--accb)">◆</span>2nm Nexa A4 Chipset</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--gold)">◆</span>144Hz Quantum OLED</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--ok)">◆</span>Satellite Connectivity</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--accb)">◆</span>Grade 5 Titanium Frame</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--gold)">◆</span>IP68 + IP69K Rated</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--accb)">◆</span>200MP Quad Camera</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--gold)">◆</span>60 TOPS AI Engine</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--ok)">◆</span>100W Ultra-fast Charging</span>
+      <span style="white-space:nowrap;font-size:.82rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:.7rem"><span style="color:var(--accb)">◆</span>2nm Nexa A4 Chipset</span>
+    </div>
+  </div>
+
+  <!-- Featured Products -->
+  <section style="padding:7rem 0">
+    <div class="container">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3.5rem;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div class="slbl rev">Lineup 2025</div>
+          <h2 class="stitle rev" style="animation-delay:.1s">The Nexa Family</h2>
+        </div>
+        <button class="btn btn-o btn-sm rev" onclick="goto('products')" style="animation-delay:.2s">View All →</button>
+      </div>
+      <div class="g4" id="home-products"></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:4rem">
+        <div class="slbl rev">Why Nexa</div>
+        <h2 class="stitle rev" style="max-width:600px;margin:0 auto;animation-delay:.1s">Engineered for those who<br><span class="atxt">demand the extraordinary.</span></h2>
+      </div>
+      <div class="g3" style="gap:2rem">
+        <div class="card rev" style="text-align:center;padding:2.5rem 2rem">
+          <div style="width:54px;height:54px;border-radius:1rem;background:var(--accs);border:1px solid rgba(108,99,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem">
+            <svg width="22" height="22" fill="none" stroke="var(--accb)" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+          </div>
+          <h3 style="font-size:1.15rem;margin-bottom:.7rem">AI-First Design</h3>
+          <p style="font-size:.875rem;color:var(--t2);line-height:1.7">60 TOPS neural processor runs powerful AI models entirely on-device. Your data stays private. Intelligence stays always-on.</p>
+        </div>
+        <div class="card rev" style="text-align:center;padding:2.5rem 2rem;animation-delay:.1s">
+          <div style="width:54px;height:54px;border-radius:1rem;background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem">
+            <svg width="22" height="22" fill="none" stroke="var(--gold)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <h3 style="font-size:1.15rem;margin-bottom:.7rem">Cinema-Grade Cameras</h3>
+          <p style="font-size:.875rem;color:var(--t2);line-height:1.7">200MP main sensor with f/1.4 aperture. AI-powered computational photography. Stunning detail, day or night.</p>
+        </div>
+        <div class="card rev" style="text-align:center;padding:2.5rem 2rem;animation-delay:.2s">
+          <div style="width:54px;height:54px;border-radius:1rem;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem">
+            <svg width="22" height="22" fill="none" stroke="var(--ok)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3 style="font-size:1.15rem;margin-bottom:.7rem">Blazing Performance</h3>
+          <p style="font-size:.875rem;color:var(--t2);line-height:1.7">Nexa A4 Ultra on 2nm process with silicon-carbon battery for all-day endurance. Unmatched speed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding:7rem 0">
+    <div class="container">
+      <div style="background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(108,99,255,.04) 50%,rgba(212,168,83,.06));border:1px solid rgba(108,99,255,.2);border-radius:2.5rem;padding:5rem 3rem;text-align:center;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(108,99,255,.15),transparent 70%);pointer-events:none"></div>
+        <div class="slbl rev">Limited Availability</div>
+        <h2 class="stitle rev" style="font-size:clamp(2.2rem,4vw,3.2rem);margin:1rem 0 1.5rem;animation-delay:.1s">Secure Your <span class="gtxt">Nexa Ultra</span> Today</h2>
+        <p class="gsub rev" style="max-width:480px;margin:0 auto 2.5rem;animation-delay:.2s">Join thousands of early adopters. Starting at $1,499.</p>
+        <div class="rev" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation-delay:.3s">
+          <button class="btn btn-p" onclick="showDetail('nexa-ultra')" style="font-size:.95rem;padding:.9rem 2.25rem">Order Nexa Ultra <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+          <button class="btn btn-o" onclick="goto('products')" style="font-size:.95rem;padding:.9rem 1.75rem">Compare All Models</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="container">
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem" id="footer-grid">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,#fff,var(--accb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem">◆ Nexa</div>
+        <p style="color:var(--tm);font-size:.85rem;line-height:1.7;max-width:260px">Building the world's most advanced AI-powered smartphones. The future is in your hands.</p>
+      </div>
+      <div>
+        <h4 style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:1.2rem">Products</h4>
+        <div style="display:flex;flex-direction:column;gap:.7rem">
+          <button class="flink" onclick="showDetail('nexa-ultra')">Nexa Ultra</button>
+          <button class="flink" onclick="showDetail('nexa-pro')">Nexa Pro</button>
+          <button class="flink" onclick="showDetail('nexa-s')">Nexa S</button>
+          <button class="flink" onclick="showDetail('nexa-one')">Nexa One</button>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:1.2rem">Company</h4>
+        <div style="display:flex;flex-direction:column;gap:.7rem">
+          <button class="flink" onclick="goto('about')">About Us</button>
+          <button class="flink" onclick="goto('contact')">Contact</button>
+          <button class="flink" onclick="toast('Press kit coming soon!','info')">Press Kit</button>
+          <button class="flink" onclick="toast('Careers page launching soon!','info')">Careers</button>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:1.2rem">Legal</h4>
+        <div style="display:flex;flex-direction:column;gap:.7rem">
+          <button class="flink" onclick="toast('Privacy policy coming soon','info')">Privacy Policy</button>
+          <button class="flink" onclick="toast('Terms coming soon','info')">Terms of Service</button>
+          <button class="flink" onclick="toast('Warranty info coming soon','info')">Warranty</button>
+        </div>
+      </div>
+    </div>
+    <div class="div" style="margin-bottom:1.5rem"></div>
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+      <p style="color:var(--tm);font-size:.78rem">© 2025 Nexa Technologies, Inc. All rights reserved.</p>
+      <p style="color:var(--tm);font-size:.78rem">Made with precision. Designed for the future.</p>
+    </div>
+  </div></footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: PRODUCTS
+═══════════════════════════════════════════ -->
+<div class="page" id="page-products">
+  <section style="padding:10rem 0 5rem;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(108,99,255,.12),transparent 70%)"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black,transparent 70%)"></div>
+    <div class="container" style="position:relative;z-index:2;text-align:center">
+      <div class="slbl">2025 Lineup</div>
+      <h1 style="font-size:clamp(3rem,6vw,5rem);font-weight:800;letter-spacing:-.04em;margin-bottom:1.25rem">The Nexa <span class="gtxt">Collection</span></h1>
+      <p class="gsub" style="max-width:520px;margin:0 auto">Four devices. One vision. Find the perfect Nexa for your life.</p>
+    </div>
+  </section>
+
+  <!-- Benefits bar -->
+  <div style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2);padding:1.25rem 0">
+    <div class="container" style="display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--t2)"><svg width="15" height="15" fill="none" stroke="var(--accb)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>1-Year Warranty</span>
+      <span style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--t2)"><svg width="15" height="15" fill="none" stroke="var(--gold)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Free Express Shipping</span>
+      <span style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--t2)"><svg width="15" height="15" fill="none" stroke="var(--ok)" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>30-Day Returns</span>
+      <span style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--t2)"><svg width="15" height="15" fill="none" stroke="var(--accb)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>0% Financing Available</span>
+    </div>
+  </div>
+
+  <!-- Filter + Grid -->
+  <section style="padding:5rem 0">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem">
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap" id="filter-btns">
+          <button class="vbtn on" onclick="filterProds(this,'all')">All Models</button>
+          <button class="vbtn" onclick="filterProds(this,'featured')">Featured</button>
+          <button class="vbtn" onclick="filterProds(this,'under1000')">Under $1,000</button>
+          <button class="vbtn" onclick="filterProds(this,'premium')">$1,000+</button>
+        </div>
+        <span style="font-size:.82rem;color:var(--tm)" id="prod-count">4 devices</span>
+      </div>
+      <div class="g4" id="all-products"></div>
+    </div>
+  </section>
+
+  <!-- Comparison table -->
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border)">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:3rem">
+        <div class="slbl rev">Side by Side</div>
+        <h2 class="stitle rev" style="animation-delay:.1s">Compare the Lineup</h2>
+      </div>
+      <div style="overflow-x:auto;border-radius:1.5rem;border:1px solid var(--border)">
+        <table style="width:100%;border-collapse:collapse;min-width:700px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border)">
+              <th style="padding:1.2rem 1.5rem;text-align:left;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tm);background:var(--bg2)">Feature</th>
+              <th style="padding:1.2rem;text-align:center;font-family:'Syne',sans-serif;font-weight:700;color:var(--t2);background:var(--bg2)">One</th>
+              <th style="padding:1.2rem;text-align:center;font-family:'Syne',sans-serif;font-weight:700;color:var(--t2);background:var(--bg2)">S</th>
+              <th style="padding:1.2rem;text-align:center;font-family:'Syne',sans-serif;font-weight:700;color:var(--t2);background:var(--bg2)">Pro</th>
+              <th style="padding:1.2rem;text-align:center;font-family:'Syne',sans-serif;font-weight:700;color:var(--accb);background:var(--accs)">Ultra ★</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:1rem 1.5rem;font-size:.83rem;color:var(--tm)">Starting Price</td><td style="padding:1rem;text-align:center;font-size:.88rem;font-weight:600">$799</td><td style="padding:1rem;text-align:center;font-size:.88rem;font-weight:600">$999</td><td style="padding:1rem;text-align:center;font-size:.88rem;font-weight:600">$1,199</td><td style="padding:1rem;text-align:center;font-size:.88rem;font-weight:700;background:var(--accs);color:var(--accb)">$1,499</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:1rem 1.5rem;font-size:.83rem;color:var(--tm)">Display</td><td style="padding:1rem;text-align:center;font-size:.83rem">6.1″ 90Hz</td><td style="padding:1rem;text-align:center;font-size:.83rem">6.4″ 120Hz</td><td style="padding:1rem;text-align:center;font-size:.83rem">6.7″ 120Hz</td><td style="padding:1rem;text-align:center;font-size:.83rem;background:var(--accs);font-weight:600">6.9″ 144Hz</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:1rem 1.5rem;font-size:.83rem;color:var(--tm)">Main Camera</td><td style="padding:1rem;text-align:center;font-size:.83rem">50MP</td><td style="padding:1rem;text-align:center;font-size:.83rem">64MP</td><td style="padding:1rem;text-align:center;font-size:.83rem">200MP</td><td style="padding:1rem;text-align:center;font-size:.83rem;background:var(--accs);font-weight:600">200MP f/1.4</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:1rem 1.5rem;font-size:.83rem;color:var(--tm)">RAM</td><td style="padding:1rem;text-align:center;font-size:.83rem">8GB</td><td style="padding:1rem;text-align:center;font-size:.83rem">12GB</td><td style="padding:1rem;text-align:center;font-size:.83rem">16GB</td><td style="padding:1rem;text-align:center;font-size:.83rem;background:var(--accs);font-weight:600">24GB</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:1rem 1.5rem;font-size:.83rem;color:var(--tm)">Charging</td><td style="padding:1rem;text-align:center;font-size:.83rem">33W</td><td style="padding:1rem;text-align:center;font-size:.83rem">45W</td><td style="padding:1rem;text-align:center;font-size:.83rem">65W</td><td style="padding:1rem;text-align:center;font-size:.83rem;background:var(--accs);font-weight:600">100W</td></tr>
+            <tr><td style="padding:1rem 1.5rem;font-size:.83rem;color:var(--tm)">On-device AI</td><td style="padding:1rem;text-align:center;font-size:.8rem;color:var(--tm)">Basic</td><td style="padding:1rem;text-align:center;font-size:.8rem;color:var(--t2)">Enhanced</td><td style="padding:1rem;text-align:center;font-size:.8rem">Advanced</td><td style="padding:1rem;text-align:center;background:var(--accs);font-weight:600;color:var(--accb);font-size:.8rem">7B LLM On-Device</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="container" style="display:flex;align-items:center;justify-content:center;padding:2rem 0">
+    <p style="color:var(--tm);font-size:.8rem">© 2025 Nexa Technologies, Inc.</p>
+  </div></footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: PRODUCT DETAIL
+═══════════════════════════════════════════ -->
+<div class="page" id="page-detail">
+  <main style="padding:7rem 0 5rem;min-height:80vh">
+    <div class="container" id="detail-content"></div>
+  </main>
+  <section style="padding:5rem 0;border-top:1px solid var(--border)">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem">
+        <h3 style="font-size:1.4rem;font-weight:700">Also in the lineup</h3>
+        <button class="btn btn-g" onclick="goto('products')">View All →</button>
+      </div>
+      <div class="g4" id="related-grid"></div>
+    </div>
+  </section>
+  <footer><div class="container" style="display:flex;align-items:center;justify-content:center;padding:2rem 0"><p style="color:var(--tm);font-size:.8rem">© 2025 Nexa Technologies, Inc.</p></div></footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ABOUT
+═══════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <section style="padding:10rem 0 6rem;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(108,99,255,.14),transparent 70%)"></div>
+    <div class="container" style="position:relative;z-index:2">
+      <div style="max-width:740px">
+        <div class="slbl">Our Story</div>
+        <h1 style="font-size:clamp(3rem,6vw,5rem);font-weight:800;letter-spacing:-.045em;line-height:1;margin-bottom:2rem">We build devices<br>that <span class="gtxt">change lives.</span></h1>
+        <p class="gsub" style="max-width:600px">Nexa was founded on a single belief: that the smartphone in your pocket should be the most powerful tool you own — for creation, discovery, and human connection. We're obsessed with building technology that feels like magic.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:0 0 7rem">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start" id="about-grid">
+        <div class="rev">
+          <div style="background:linear-gradient(135deg,#0d0d20,#1a1030);border-radius:2rem;padding:3rem;border:1px solid var(--border);position:relative;overflow:hidden">
+            <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(108,99,255,.2),transparent);filter:blur(30px)"></div>
+            <blockquote style="position:relative;z-index:1">
+              <div style="font-size:3.5rem;color:var(--acc);line-height:1;margin-bottom:1.5rem;font-family:'Syne',sans-serif;font-weight:800">"</div>
+              <p style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;line-height:1.4;letter-spacing:-.02em;margin-bottom:1.5rem">The best technology disappears. It becomes part of you.</p>
+              <footer style="font-size:.82rem;color:var(--tm)">— Nexa Founding Principle</footer>
+            </blockquote>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem">
+            <div class="statc"><div class="statn">2M+</div><div style="font-size:.78rem;color:var(--tm);margin-top:.3rem">Devices Sold</div></div>
+            <div class="statc"><div class="statn">140+</div><div style="font-size:.78rem;color:var(--tm);margin-top:.3rem">Countries</div></div>
+            <div class="statc"><div class="statn">98%</div><div style="font-size:.78rem;color:var(--tm);margin-top:.3rem">Satisfaction Rate</div></div>
+            <div class="statc"><div class="statn">500+</div><div style="font-size:.78rem;color:var(--tm);margin-top:.3rem">Engineers</div></div>
+          </div>
+        </div>
+
+        <div class="rev" style="animation-delay:.15s">
+          <div class="slbl" style="margin-bottom:.75rem">Our Mission</div>
+          <h2 style="font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;line-height:1.1">Intelligence that serves <span class="atxt">humanity.</span></h2>
+          <p style="color:var(--t2);line-height:1.8;margin-bottom:1.25rem">We believe AI should work for people, not the other way around. Every Nexa device runs powerful AI models entirely on-device — your data stays yours, your experience stays private.</p>
+          <p style="color:var(--t2);line-height:1.8;margin-bottom:1.25rem">Our 500+ engineers work at the intersection of materials science, computational photography, and on-device machine learning to push what's possible with mobile hardware.</p>
+          <p style="color:var(--t2);line-height:1.8">From grade 5 titanium frames to custom 2nm chipsets, every element of a Nexa device is engineered with intent. No compromises. No shortcuts.</p>
+          <div style="margin-top:2.5rem;display:flex;flex-direction:column;gap:1rem">
+            <div style="display:flex;align-items:flex-start;gap:1rem"><div style="width:38px;height:38px;border-radius:.75rem;background:var(--accs);border:1px solid rgba(108,99,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" fill="none" stroke="var(--accb)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><h4 style="font-weight:600;margin-bottom:.2rem;font-size:.92rem">Privacy by Default</h4><p style="font-size:.82rem;color:var(--tm);line-height:1.6">AI runs on-device. We never sell your data. Ever.</p></div></div>
+            <div style="display:flex;align-items:flex-start;gap:1rem"><div style="width:38px;height:38px;border-radius:.75rem;background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" fill="none" stroke="var(--gold)" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div><div><h4 style="font-weight:600;margin-bottom:.2rem;font-size:.92rem">Sustainability First</h4><p style="font-size:.82rem;color:var(--tm);line-height:1.6">Carbon-neutral manufacturing. Recycled materials. Built to last.</p></div></div>
+            <div style="display:flex;align-items:flex-start;gap:1rem"><div style="width:38px;height:38px;border-radius:.75rem;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" fill="none" stroke="var(--ok)" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><h4 style="font-weight:600;margin-bottom:.2rem;font-size:.92rem">Repairability</h4><p style="font-size:.82rem;color:var(--tm);line-height:1.6">Repair score 8/10. Modular components. 7 years of updates.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border)">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:4rem">
+        <div class="slbl rev">The People</div>
+        <h2 class="stitle rev" style="animation-delay:.1s">Built by obsessives,<br><span class="atxt">for the curious.</span></h2>
+      </div>
+      <div class="g4">
+        <div class="card rev" style="text-align:center;padding:2rem">
+          <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#a29bfe);margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800">AK</div>
+          <h3 style="font-size:.98rem;margin-bottom:.25rem">Aryan Kapoor</h3>
+          <p style="font-size:.78rem;color:var(--accb);font-weight:600;margin-bottom:.7rem">CEO & Co-founder</p>
+          <p style="font-size:.8rem;color:var(--tm);line-height:1.6">Ex-Apple silicon architect. 15 years building chips that changed the world.</p>
+        </div>
+        <div class="card rev delay-100" style="text-align:center;padding:2rem">
+          <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e8c878);margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#000">LC</div>
+          <h3 style="font-size:.98rem;margin-bottom:.25rem">Luna Chen</h3>
+          <p style="font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:.7rem">CTO & Co-founder</p>
+          <p style="font-size:.8rem;color:var(--tm);line-height:1.6">MIT AI Lab alumni. Pioneered on-device language models at scale.</p>
+        </div>
+        <div class="card rev" style="text-align:center;padding:2rem;animation-delay:.15s">
+          <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--ok),#6ee7b7);margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#000">MR</div>
+          <h3 style="font-size:.98rem;margin-bottom:.25rem">Marcus Reid</h3>
+          <p style="font-size:.78rem;color:var(--ok);font-weight:600;margin-bottom:.7rem">Chief Design Officer</p>
+          <p style="font-size:.8rem;color:var(--tm);line-height:1.6">Former Jony Ive protégé. Believes great design is invisible engineering.</p>
+        </div>
+        <div class="card rev" style="text-align:center;padding:2rem;animation-delay:.2s">
+          <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#fb7185);margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff">SA</div>
+          <h3 style="font-size:.98rem;margin-bottom:.25rem">Sofia Antonova</h3>
+          <p style="font-size:.78rem;color:#f472b6;font-weight:600;margin-bottom:.7rem">VP of Camera Systems</p>
+          <p style="font-size:.8rem;color:var(--tm);line-height:1.6">PhD in computational imaging. Led camera R&D at three top-tier OEMs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding:7rem 0">
+    <div class="container" style="text-align:center">
+      <div class="slbl rev">Join Us</div>
+      <h2 class="stitle rev" style="margin-bottom:1.5rem;animation-delay:.1s">Shape the future<br><span class="gtxt">with us.</span></h2>
+      <p class="gsub rev" style="max-width:460px;margin:0 auto 2.5rem;animation-delay:.2s">We're hiring the best engineers, designers, and thinkers. If you're obsessed with building what others say is impossible, we want to meet you.</p>
+      <div class="rev" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation-delay:.3s">
+        <button class="btn btn-p" onclick="goto('contact')" style="padding:.9rem 2rem">Get in Touch</button>
+        <button class="btn btn-o" onclick="goto('products')" style="padding:.9rem 1.75rem">Explore Products</button>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="container" style="display:flex;align-items:center;justify-content:center;padding:2rem 0"><p style="color:var(--tm);font-size:.8rem">© 2025 Nexa Technologies, Inc.</p></div></footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CONTACT
+═══════════════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <section style="padding:10rem 0 5rem;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(108,99,255,.12),transparent 70%)"></div>
+    <div class="container" style="position:relative;z-index:2;text-align:center">
+      <div class="slbl">Get in Touch</div>
+      <h1 style="font-size:clamp(3rem,6vw,5rem);font-weight:800;letter-spacing:-.045em;margin-bottom:1.25rem">Let's <span class="gtxt">talk.</span></h1>
+      <p class="gsub" style="max-width:460px;margin:0 auto">Questions, support, or partnerships — we're here.</p>
+    </div>
+  </section>
+
+  <section style="padding:0 0 8rem">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:4rem;align-items:start" id="contact-grid">
+        <!-- Info -->
+        <div>
+          <div class="card rev" style="margin-bottom:1.25rem">
+            <div style="display:flex;align-items:flex-start;gap:1.1rem">
+              <div style="width:42px;height:42px;border-radius:.875rem;background:var(--accs);border:1px solid rgba(108,99,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" fill="none" stroke="var(--accb)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+              <div><h4 style="font-weight:700;margin-bottom:.3rem;font-size:.92rem">Email Us</h4><p style="color:var(--accb);font-size:.875rem">hello@nexaphones.com</p><p style="font-size:.78rem;color:var(--tm);margin-top:.2rem">We reply within 24 hours</p></div>
+            </div>
+          </div>
+          <div class="card rev" style="margin-bottom:1.25rem;animation-delay:.1s">
+            <div style="display:flex;align-items:flex-start;gap:1.1rem">
+              <div style="width:42px;height:42px;border-radius:.875rem;background:rgba(212,168,83,.08);border:1px solid rgba(212,168,83,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" fill="none" stroke="var(--gold)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.29 9.81a19.79 19.79 0 01-3.07-8.62A2 2 0 012.2 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 8.9a16 16 0 006.14 6.14l1.06-1.06a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+              <div><h4 style="font-weight:700;margin-bottom:.3rem;font-size:.92rem">Call Us</h4><p style="color:var(--gold);font-size:.875rem">+1 (888) 555-NEXA</p><p style="font-size:.78rem;color:var(--tm);margin-top:.2rem">Mon–Fri, 9am–6pm PST</p></div>
+            </div>
+          </div>
+          <div class="card rev" style="animation-delay:.2s">
+            <div style="display:flex;align-items:flex-start;gap:1.1rem">
+              <div style="width:42px;height:42px;border-radius:.875rem;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" fill="none" stroke="var(--ok)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><h4 style="font-weight:700;margin-bottom:.3rem;font-size:.92rem">Headquarters</h4><p style="font-size:.875rem;color:var(--t2);line-height:1.5">2100 Innovation Drive<br>San Francisco, CA 94107</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div class="card rev" style="padding:2.5rem;animation-delay:.1s">
+          <h3 style="font-size:1.35rem;font-weight:700;margin-bottom:.5rem">Send us a message</h3>
+          <p style="font-size:.85rem;color:var(--tm);margin-bottom:2rem">Fill out the form and we'll get back to you shortly.</p>
+
+          <div class="alert" id="c-alert"></div>
+
+          <form id="contact-form" novalidate>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem">
+              <div style="margin-bottom:1.25rem">
+                <label class="flbl" for="cn">Full Name *</label>
+                <input class="finp" type="text" id="cn" placeholder="John Appleseed" required/>
+              </div>
+              <div style="margin-bottom:1.25rem">
+                <label class="flbl" for="ce">Email *</label>
+                <input class="finp" type="email" id="ce" placeholder="john@example.com" required/>
+              </div>
+            </div>
+            <div style="margin-bottom:1.25rem">
+              <label class="flbl" for="cs">Subject</label>
+              <select class="finp" id="cs" style="appearance:none;cursor:pointer">
+                <option value="">Select a topic...</option>
+                <option>Product Inquiry</option><option>Order Support</option><option>Technical Support</option>
+                <option>Press & Media</option><option>Partnership</option><option>Careers</option><option>Other</option>
+              </select>
+            </div>
+            <div style="margin-bottom:1.5rem">
+              <label class="flbl" for="cm">Message *</label>
+              <textarea class="finp" id="cm" placeholder="Tell us how we can help..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-p" style="width:100%;justify-content:center;padding:1rem;font-size:.93rem" id="c-btn">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="container" style="display:flex;align-items:center;justify-content:center;padding:2rem 0"><p style="color:var(--tm);font-size:.8rem">© 2025 Nexa Technologies, Inc.</p></div></footer>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: LOGIN
+═══════════════════════════════════════════ -->
+<div class="page" id="page-login">
+  <div style="position:fixed;inset:0;background:radial-gradient(ellipse 80% 80% at 50% -20%,rgba(108,99,255,.14),transparent 70%);pointer-events:none;z-index:0"></div>
+  <div style="display:grid;place-items:center;min-height:100vh;padding:2rem;position:relative;z-index:1">
+    <div style="width:100%;max-width:430px">
+      <div style="text-align:center;margin-bottom:2.5rem">
+        <button class="logo" onclick="goto('home')" style="font-size:1.9rem">◆ Nexa</button>
+        <p style="color:var(--tm);font-size:.85rem;margin-top:.5rem">Welcome back</p>
+      </div>
+      <div class="card" style="padding:2.5rem">
+        <h2 style="font-size:1.65rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.45rem">Sign In</h2>
+        <p style="font-size:.85rem;color:var(--tm);margin-bottom:1.75rem">Enter your credentials to access your account.</p>
+        <div class="alert" id="login-alert"></div>
+        <form id="login-form" novalidate>
+          <div style="margin-bottom:1.25rem">
+            <label class="flbl" for="le">Email Address</label>
+            <input class="finp" type="email" id="le" placeholder="you@example.com" autocomplete="email" required/>
+          </div>
+          <div style="margin-bottom:1.5rem">
+            <label class="flbl" for="lp" style="display:flex;justify-content:space-between">
+              <span>Password</span>
+              <span style="font-size:.78rem;color:var(--accb);cursor:pointer" onclick="toast('Password reset coming soon!','info')">Forgot password?</span>
+            </label>
+            <div style="position:relative">
+              <input class="finp" type="password" id="lp" placeholder="••••••••" autocomplete="current-password" required style="padding-right:3rem"/>
+              <button type="button" onclick="togglePwd('lp',this)" style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--tm);cursor:pointer;padding:0;transition:color .2s" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--tm)'">
+                <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-p" style="width:100%;justify-content:center;padding:.95rem;font-size:.92rem" id="l-btn">Sign In</button>
+        </form>
+        <div style="display:flex;align-items:center;gap:1rem;margin:1.6rem 0">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:.76rem;color:var(--tm);white-space:nowrap">or continue with</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+        <button onclick="toast('Google login coming soon!','info')" style="width:100%;padding:.85rem;border:1px solid var(--border);border-radius:.75rem;background:transparent;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.75rem" onmouseover="this.style.borderColor='var(--acc)';this.style.background='var(--accs)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+          <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+      </div>
+      <p style="text-align:center;margin-top:1.4rem;font-size:.85rem;color:var(--tm)">Don't have an account? <button class="btn btn-g" onclick="goto('signup')" style="color:var(--accb);font-weight:600;padding:0">Create one free →</button></p>
+      <p style="text-align:center;margin-top:.75rem"><button class="btn btn-g" onclick="goto('home')" style="font-size:.78rem">← Back to Nexa</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: SIGNUP
+═══════════════════════════════════════════ -->
+<div class="page" id="page-signup">
+  <div style="position:fixed;inset:0;background:radial-gradient(ellipse 80% 80% at 50% -20%,rgba(108,99,255,.14),transparent 70%);pointer-events:none;z-index:0"></div>
+  <div style="display:grid;place-items:center;min-height:100vh;padding:2rem;position:relative;z-index:1">
+    <div style="width:100%;max-width:470px;padding:2rem 0">
+      <div style="text-align:center;margin-bottom:2.5rem">
+        <button class="logo" onclick="goto('home')" style="font-size:1.9rem">◆ Nexa</button>
+        <p style="color:var(--tm);font-size:.85rem;margin-top:.5rem">Join the future of mobile</p>
+      </div>
+      <div class="card" style="padding:2.5rem">
+        <h2 style="font-size:1.65rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.45rem">Create Account</h2>
+        <p style="font-size:.85rem;color:var(--tm);margin-bottom:1.75rem">Start your Nexa journey today. It's free.</p>
+        <div class="alert" id="signup-alert"></div>
+        <form id="signup-form" novalidate>
+          <div style="margin-bottom:1.25rem">
+            <label class="flbl" for="sn">Full Name</label>
+            <input class="finp" type="text" id="sn" placeholder="John Appleseed" autocomplete="name" required/>
+          </div>
+          <div style="margin-bottom:1.25rem">
+            <label class="flbl" for="se">Email Address</label>
+            <input class="finp" type="email" id="se" placeholder="you@example.com" autocomplete="email" required/>
+          </div>
+          <div style="margin-bottom:1.25rem">
+            <label class="flbl" for="sp">Password</label>
+            <div style="position:relative">
+              <input class="finp" type="password" id="sp" placeholder="Min. 6 characters" autocomplete="new-password" required style="padding-right:3rem" oninput="updateStrength(this)"/>
+              <button type="button" onclick="togglePwd('sp',this)" style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--tm);cursor:pointer;padding:0;transition:color .2s" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--tm)'">
+                <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div style="margin-top:.45rem"><div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div id="str-bar" style="height:100%;width:0;border-radius:2px;transition:all .3s"></div></div><div style="display:flex;justify-content:flex-end;margin-top:.25rem"><span id="str-lbl" style="font-size:.7rem;font-weight:700"></span></div></div>
+          </div>
+          <div style="margin-bottom:1.5rem">
+            <label class="flbl" for="scp">Confirm Password</label>
+            <div style="position:relative">
+              <input class="finp" type="password" id="scp" placeholder="Repeat your password" autocomplete="new-password" required style="padding-right:3rem"/>
+              <button type="button" onclick="togglePwd('scp',this)" style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--tm);cursor:pointer;padding:0;transition:color .2s" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--tm)'">
+                <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-p" style="width:100%;justify-content:center;padding:.95rem;font-size:.92rem" id="s-btn">Create My Account</button>
+        </form>
+        <div style="display:flex;align-items:center;gap:1rem;margin:1.6rem 0">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:.76rem;color:var(--tm);white-space:nowrap">or continue with</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+        <button onclick="toast('Google sign-up coming soon!','info')" style="width:100%;padding:.85rem;border:1px solid var(--border);border-radius:.75rem;background:transparent;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.75rem" onmouseover="this.style.borderColor='var(--acc)';this.style.background='var(--accs)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+          <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Sign up with Google
+        </button>
+      </div>
+      <p style="text-align:center;margin-top:1.4rem;font-size:.85rem;color:var(--tm)">Already have an account? <button class="btn btn-g" onclick="goto('login')" style="color:var(--accb);font-weight:600;padding:0">Sign in →</button></p>
+      <p style="text-align:center;margin-top:.75rem"><button class="btn btn-g" onclick="goto('home')" style="font-size:.78rem">← Back to Nexa</button></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const PRODUCTS = [
+  {
+    slug:'nexa-one', name:'Nexa One', tagline:'The beginning of brilliance.',
+    badge:'New', price:799, featured:false,
+    colors:['#111','#f0f0f0','#4a9eff'],
+    colorNames:['Midnight Black','Pearl White','Sky Blue'],
+    variants:[{s:'128GB',p:799},{s:'256GB',p:899}],
+    grad:'linear-gradient(135deg,#0a1a10 0%,#0d1510 40%,#0a2015 100%)',
+    glow:'rgba(52,211,153,.25)',
+    desc:'Nexa One is your gateway to the Nexa ecosystem. Built for everyday excellence, it delivers a refined experience with intelligent AI features that adapt to your lifestyle.',
+    specs:[
+      {cat:'Display',items:[{l:'Size',v:'6.1″ AMOLED'},{l:'Resolution',v:'2400 × 1080 FHD+'},{l:'Refresh Rate',v:'90Hz'},{l:'Brightness',v:'800 nits peak'}]},
+      {cat:'Performance',items:[{l:'Chipset',v:'Nexa A1 (4nm)'},{l:'RAM',v:'8GB LPDDR5'},{l:'Storage',v:'128GB / 256GB UFS 3.1'}]},
+      {cat:'Camera',items:[{l:'Main',v:'50MP f/1.8'},{l:'Ultra-wide',v:'12MP f/2.2'},{l:'Front',v:'16MP f/2.0'}]},
+      {cat:'Battery',items:[{l:'Capacity',v:'4,200 mAh'},{l:'Charging',v:'33W Fast Charging'}]},
+    ]
+  },
+  {
+    slug:'nexa-s', name:'Nexa S', tagline:'Smart. Slim. Exceptional.',
+    badge:'', price:999, featured:false,
+    colors:['#3a3a3a','#b0b8c8','#e8c0a8'],
+    colorNames:['Graphite','Glacier Silver','Rose Gold'],
+    variants:[{s:'256GB',p:999},{s:'512GB',p:1099}],
+    grad:'linear-gradient(135deg,#1a1a20 0%,#0d0d18 40%,#1a1a28 100%)',
+    glow:'rgba(200,160,80,.22)',
+    desc:'Nexa S strikes the perfect balance between performance and elegance. A slim 7.2mm profile houses a powerhouse chipset and pro-grade cameras for creators on the move.',
+    specs:[
+      {cat:'Display',items:[{l:'Size',v:'6.4″ Dynamic AMOLED 2X'},{l:'Resolution',v:'2560 × 1440 QHD+'},{l:'Refresh Rate',v:'120Hz LTPO'},{l:'Brightness',v:'1,750 nits peak'}]},
+      {cat:'Performance',items:[{l:'Chipset',v:'Nexa A2 (3nm)'},{l:'RAM',v:'12GB LPDDR5X'},{l:'Storage',v:'256GB / 512GB UFS 4.0'}]},
+      {cat:'Camera',items:[{l:'Main',v:'64MP f/1.7 OIS'},{l:'Ultra-wide',v:'16MP f/2.0'},{l:'Telephoto',v:'10MP 3× Optical'},{l:'Front',v:'32MP f/2.0'}]},
+      {cat:'Battery',items:[{l:'Capacity',v:'4,700 mAh'},{l:'Wired',v:'45W Super Fast'},{l:'Wireless',v:'15W'}]},
+    ]
+  },
+  {
+    slug:'nexa-pro', name:'Nexa Pro', tagline:'Engineered for those who demand more.',
+    badge:'Best Seller', price:1199, featured:true,
+    colors:['#0a0a18','#d4c8b0','#c8a050'],
+    colorNames:['Deep Space','Natural Titanium','Desert Gold'],
+    variants:[{s:'256GB',p:1199},{s:'512GB',p:1299},{s:'1TB',p:1499}],
+    grad:'linear-gradient(135deg,#0a1a2e 0%,#0d1520 40%,#0a1a30 100%)',
+    glow:'rgba(52,150,255,.25)',
+    desc:'Nexa Pro pushes the boundaries of what a smartphone can do. Advanced AI engine, satellite connectivity, and cinema-grade cameras redefine professional-grade mobile computing.',
+    specs:[
+      {cat:'Display',items:[{l:'Size',v:'6.7″ ProMotion XDR OLED'},{l:'Resolution',v:'2796 × 1290 Super Retina'},{l:'Refresh Rate',v:'1–120Hz Adaptive LTPO3'},{l:'Brightness',v:'2,000 nits peak HDR'}]},
+      {cat:'Performance',items:[{l:'Chipset',v:'Nexa A3 Pro (3nm 2nd Gen)'},{l:'RAM',v:'16GB LPDDR5X'},{l:'Storage',v:'256GB / 512GB / 1TB UFS 4.0'},{l:'AI Core',v:'Dedicated 40 TOPS NPU'}]},
+      {cat:'Camera',items:[{l:'Main',v:'200MP f/1.6 Sensor-shift OIS'},{l:'Ultra-wide',v:'48MP f/1.8 Macro'},{l:'Periscope Tele',v:'12MP 10× Optical'},{l:'Front',v:'40MP f/1.8 4K/60fps'}]},
+      {cat:'Connectivity',items:[{l:'Network',v:'5G Sub-6 + mmWave'},{l:'Wi-Fi',v:'Wi-Fi 7 (802.11be)'},{l:'Special',v:'Satellite SOS + Bidirectional'}]},
+      {cat:'Battery',items:[{l:'Capacity',v:'5,000 mAh'},{l:'Wired',v:'65W Ultra-fast'},{l:'Wireless',v:'30W MagSafe'},{l:'Reverse',v:'10W'}]},
+    ]
+  },
+  {
+    slug:'nexa-ultra', name:'Nexa Ultra', tagline:'Beyond imagination. Beyond limits.',
+    badge:'New', price:1499, featured:true,
+    colors:['#1a1a1a','#e8e8f0','#8a7e6e','#4a1a6e'],
+    colorNames:['Obsidian Black','Arctic White','Titanium Natural','Deep Violet'],
+    variants:[{s:'512GB',p:1499},{s:'1TB',p:1699}],
+    grad:'linear-gradient(135deg,#1a0a2e 0%,#0d0d20 40%,#1a1030 100%)',
+    glow:'rgba(108,99,255,.3)',
+    desc:'Nexa Ultra is the apex of human engineering. Every atom is obsessively refined — from its aerospace-grade titanium frame to its revolutionary under-display fingerprint array. This is not just a smartphone. This is the future.',
+    specs:[
+      {cat:'Display',items:[{l:'Size',v:'6.9″ Quantum LTPO4 OLED'},{l:'Resolution',v:'3088 × 1440 WQHD+'},{l:'Refresh Rate',v:'1–144Hz Adaptive'},{l:'Brightness',v:'2,600 nits peak HDR'},{l:'Protection',v:'Gorilla Glass Victus 3'},{l:'Fingerprint',v:'Under-display array (full-width)'}]},
+      {cat:'Performance',items:[{l:'Chipset',v:'Nexa A4 Ultra (2nm)'},{l:'CPU',v:'4× Cortex-X5 + 4× Cortex-A725'},{l:'GPU',v:'Adreno 850 Ultra'},{l:'RAM',v:'24GB LPDDR5X'},{l:'Storage',v:'512GB / 1TB UFS 4.1'},{l:'AI Engine',v:'60 TOPS Dedicated NPU'}]},
+      {cat:'Camera System',items:[{l:'Main',v:'200MP f/1.4 Dual-pixel AF, OIS'},{l:'Ultra-wide',v:'50MP f/1.6, 120° FoV, AF'},{l:'Periscope Tele',v:'100MP 5× Optical'},{l:'Long Tele',v:'50MP 10× Optical'},{l:'ToF',v:'Depth & AR sensing'},{l:'Front',v:'50MP f/1.7, 4K/120fps'},{l:'Video',v:'8K@30fps, 4K@240fps Log'}]},
+      {cat:'AI Features',items:[{l:'On-device LLM',v:'Nexa AI 7B (fully offline)'},{l:'Photo AI',v:'Real-time semantic segmentation'},{l:'Voice AI',v:'Contextual assistant w/ memory'},{l:'Translation',v:'Real-time 54-language'}]},
+      {cat:'Build & Materials',items:[{l:'Frame',v:'Grade 5 Titanium alloy'},{l:'Back',v:'Ceramic matte / Glass'},{l:'IP Rating',v:'IP68 + IP69K'},{l:'Dimensions',v:'164.3 × 78.1 × 8.9 mm'},{l:'Weight',v:'228g'}]},
+      {cat:'Battery & Charging',items:[{l:'Capacity',v:'5,500 mAh Si-Carbon'},{l:'Wired',v:'100W GaN Ultra-fast (0→100% in 25min)'},{l:'Wireless',v:'50W AirCharge'},{l:'Reverse',v:'15W'},{l:'Life',v:'Up to 36 hours mixed use'}]},
+      {cat:'Connectivity',items:[{l:'Cellular',v:'5G Sub-6 + mmWave, 4G LTE'},{l:'Wi-Fi',v:'Wi-Fi 7 Tri-band'},{l:'Bluetooth',v:'BT 5.4 + UWB'},{l:'Satellite',v:'Bidirectional Messaging + SOS'},{l:'USB',v:'USB 4.0 Gen 3 (40Gbps, DP 2.1)'}]},
+    ]
+  }
+];
+
+/* session state */
+let SESSION = JSON.parse(localStorage.getItem('nexa_sess')||'null');
+let currentPage = 'home';
+let currentDetail = null;
+
+/* ═══════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════ */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 60);
+});
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+}, {passive:true});
+
+function toggleMenu(){
+  document.getElementById('mmenu').classList.toggle('open');
+}
+
+function updateNavLinks(page){
+  document.querySelectorAll('.nl[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+}
+
+function updateNavAuth(){
+  const auth = document.getElementById('navauth');
+  if(SESSION){
+    auth.innerHTML = `<span style="font-size:.82rem;color:var(--accb);font-weight:600">Hi, ${SESSION.name.split(' ')[0]}</span><button class="btn btn-o btn-sm" onclick="signout()">Sign Out</button>`;
+  } else {
+    auth.innerHTML = `<button class="btn btn-g" onclick="goto('login')">Sign In</button><button class="btn btn-p btn-sm" onclick="goto('signup')">Get Started</button>`;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ROUTING
+═══════════════════════════════════════════ */
+function goto(page){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  currentPage = page;
+  window.scrollTo({top:0, behavior:'smooth'});
+  updateNavLinks(page);
+  if(page==='home') initHomeProducts();
+  if(page==='products') initProductsPage();
+  if(page==='about') setTimeout(initReveal, 200);
+  if(page==='contact') setTimeout(initReveal, 200);
+  document.getElementById('mmenu').classList.remove('open');
+}
+
+function showDetail(slug){
+  currentDetail = slug;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-detail').classList.add('active');
+  currentPage = 'detail';
+  window.scrollTo({top:0});
+  updateNavLinks('products');
+  renderDetail(slug);
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCT CARD RENDERER
+═══════════════════════════════════════════ */
+function pCard(p, onclick=''){
+  const bmap = {'New':'b-new','Best Seller':'b-best','Coming Soon':'b-coming'};
+  const badge = p.badge ? `<div style="position:absolute;top:.9rem;left:.9rem"><span class="badge ${bmap[p.badge]||'b-new'}">${p.badge}</span></div>` : '';
+  const dots = p.colors.map((c,i) => `<span class="cdot" title="${p.colorNames[i]}" style="background:${c}"></span>`).join('');
+  const fn = onclick || `showDetail('${p.slug}')`;
+  return `
+    <div class="pcard" onclick="${fn}">
+      <div class="pcard-img" style="background:${p.grad}">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:50%;background:${p.glow};filter:blur(28px)"></div>
+        <div class="pmock"><div class="pmock-inner">NEXA</div></div>
+        ${badge}
+      </div>
+      <div style="padding:1.4rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
+          <h3 style="font-size:1.2rem;font-weight:700;letter-spacing:-.02em">${p.name}</h3>
+          <span style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--accb)">$${p.price.toLocaleString()}</span>
+        </div>
+        <p style="font-size:.82rem;color:var(--t2);margin-bottom:1.15rem;line-height:1.55">${p.tagline}</p>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;gap:.35rem">${dots}</div>
+          <span style="font-size:.72rem;color:var(--accb);font-weight:600;display:flex;align-items:center;gap:.2rem">Explore <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   HOME PRODUCTS
+═══════════════════════════════════════════ */
+function initHomeProducts(){
+  const g = document.getElementById('home-products');
+  if(!g || g.dataset.loaded) return;
+  g.dataset.loaded = '1';
+  g.innerHTML = PRODUCTS.map(p => pCard(p)).join('');
+  setTimeout(initReveal, 100);
+  animCounters();
+}
+
+function animCounters(){
+  const targets = [{id:'s1',val:200,suf:'MP'},{id:'s2',val:60,suf:' TOPS'},{id:'s3',val:100,suf:'W'}];
+  targets.forEach(({id,val,suf}) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    let start = null;
+    const dur = 1800;
+    const step = ts => {
+      if(!start) start = ts;
+      const p = Math.min((ts-start)/dur,1);
+      const ease = 1-Math.pow(1-p,3);
+      el.textContent = Math.round(ease*val)+suf;
+      if(p<1) requestAnimationFrame(step);
+    };
+    setTimeout(() => requestAnimationFrame(step), 600);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCTS PAGE
+═══════════════════════════════════════════ */
+function initProductsPage(){
+  const g = document.getElementById('all-products');
+  renderProds(PRODUCTS, g);
+  setTimeout(initReveal, 100);
+}
+
+function renderProds(list, grid){
+  if(!grid) return;
+  grid.innerHTML = list.map(p => pCard(p)).join('');
+  list.forEach((p, i) => {
+    const cards = grid.querySelectorAll('.pcard');
+    if(cards[i]){
+      cards[i].style.opacity='0';
+      cards[i].style.transform='translateY(20px)';
+      setTimeout(() => {
+        cards[i].style.transition='opacity .5s ease,transform .5s ease,border-color .35s,box-shadow .35s,background .35s';
+        cards[i].style.opacity='1';
+        cards[i].style.transform='translateY(0)';
+      }, i*90);
+    }
+  });
+  document.getElementById('prod-count').textContent = list.length+' devices';
+}
+
+function filterProds(btn, filter){
+  document.querySelectorAll('#filter-btns .vbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const g = document.getElementById('all-products');
+  let list = PRODUCTS;
+  if(filter==='featured') list = PRODUCTS.filter(p=>p.featured);
+  if(filter==='under1000') list = PRODUCTS.filter(p=>p.price<1000);
+  if(filter==='premium') list = PRODUCTS.filter(p=>p.price>=1000);
+  renderProds(list, g);
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCT DETAIL
+═══════════════════════════════════════════ */
+function renderDetail(slug){
+  const p = PRODUCTS.find(x=>x.slug===slug);
+  if(!p) return;
+  document.title = `${p.name} — Nexa`;
+
+  const specsHTML = p.specs.map(cat => `
+    <div class="card rev" style="margin-bottom:1rem">
+      <h4 style="font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accb);margin-bottom:1rem">${cat.cat}</h4>
+      ${cat.items.map(it=>`<div class="srow"><span class="slb">${it.l}</span><span class="sval">${it.v}</span></div>`).join('')}
+    </div>`).join('');
+
+  const dotsHTML = p.colors.map((c,i) => `
+    <span class="cdot ${i===0?'on':''}" title="${p.colorNames[i]}" style="background:${c};width:22px;height:22px"
+      onclick="this.parentElement.querySelectorAll('.cdot').forEach(d=>d.classList.remove('on'));this.classList.add('on')"></span>`).join('');
+
+  const varHTML = p.variants.map((v,i) => `
+    <button class="vbtn ${i===0?'on':''}" onclick="selectVar(this,${v.p})">${v.s}</button>`).join('');
+
+  const highlights = (p.specs[0]?.items||[]).slice(0,4);
+
+  document.getElementById('detail-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start" id="dg">
+      <!-- Visual -->
+      <div class="rev">
+        <div style="background:${p.grad};border-radius:2rem;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid var(--border)">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 30%,${p.glow} 0%,transparent 70%)"></div>
+          <div style="animation:float 4.5s ease-in-out infinite;position:relative;z-index:2">
+            <div style="width:155px;height:290px;border-radius:36px;border:2.5px solid rgba(255,255,255,.15);background:linear-gradient(160deg,#1e1e38,#0d0d20);box-shadow:0 40px 100px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.12);position:relative">
+              <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);width:50px;height:8px;background:rgba(255,255,255,.07);border-radius:4px"></div>
+              <div style="position:absolute;inset:6px;border-radius:31px;background:linear-gradient(160deg,#1a1a30,#080814);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.75rem">
+                <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">NEXA</div>
+                <div style="font-size:.5rem;letter-spacing:.22em;color:var(--tm)">${p.name.replace('Nexa ','').toUpperCase()}</div>
+              </div>
+            </div>
+          </div>
+          ${p.badge?`<div style="position:absolute;top:1.5rem;left:1.5rem"><span class="badge ${p.badge==='New'?'b-new':p.badge==='Best Seller'?'b-best':'b-coming'}">${p.badge}</span></div>`:''}
+        </div>
+        <div style="margin-top:1.25rem;display:flex;align-items:center;gap:1rem">
+          <span style="font-size:.78rem;color:var(--tm);font-weight:500">Colors</span>
+          <div style="display:flex;gap:.45rem">${dotsHTML}</div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="rev" style="animation-delay:.15s">
+        <button onclick="goto('products')" style="color:var(--tm);background:none;border:none;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:.75rem;transition:color .2s;display:flex;align-items:center;gap:.3rem;padding:0" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--tm)'">← All Products</button>
+        <h1 style="font-size:clamp(2.2rem,4vw,3.2rem);font-weight:800;letter-spacing:-.04em;margin-bottom:.7rem" class="gtxt">${p.name}</h1>
+        <p style="color:var(--t2);font-size:1rem;line-height:1.75;margin-bottom:1.75rem">${p.desc}</p>
+
+        <div style="margin-bottom:1.4rem">
+          <div style="font-size:.72rem;color:var(--tm);margin-bottom:.4rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Starting at</div>
+          <div style="font-family:'Syne',sans-serif;font-size:2.75rem;font-weight:800;letter-spacing:-.04em"><span style="font-size:1.4rem;vertical-align:super;font-weight:600">$</span><span id="dp">${p.price.toLocaleString()}</span></div>
+        </div>
+
+        <div style="margin-bottom:1.75rem">
+          <div style="font-size:.72rem;color:var(--tm);margin-bottom:.6rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Storage</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">${varHTML}</div>
+        </div>
+
+        <div style="display:flex;gap:.875rem;flex-wrap:wrap;margin-bottom:2rem">
+          <button class="btn btn-p" onclick="addCart('${p.slug}','${p.name}')" style="flex:1;min-width:130px;justify-content:center;padding:.85rem">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+            Order Now
+          </button>
+          <button class="btn btn-o" onclick="toast('Added to wishlist ♡','success')" style="padding:.85rem 1.25rem">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem">
+          ${highlights.map(it=>`<div style="background:var(--accs);border:1px solid rgba(108,99,255,.12);border-radius:1rem;padding:.9rem;text-align:center"><div style="font-size:.67rem;color:var(--tm);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.06em">${it.l}</div><div style="font-size:.83rem;font-weight:600">${it.v.split(',')[0]}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Full specs -->
+    <div style="margin-top:5rem">
+      <div style="text-align:center;margin-bottom:3rem">
+        <div class="slbl rev">Complete Specifications</div>
+        <h2 class="stitle rev" style="animation-delay:.1s">Every detail, <span class="atxt">perfected.</span></h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.4rem">
+        ${specsHTML}
+      </div>
+    </div>
+
+    <style>@media(max-width:768px){#dg{grid-template-columns:1fr!important;gap:2rem!important}}</style>
+  `;
+
+  // Related
+  const related = PRODUCTS.filter(x=>x.slug!==slug).slice(0,4);
+  document.getElementById('related-grid').innerHTML = related.map(x=>pCard(x)).join('');
+
+  setTimeout(initReveal, 100);
+}
+
+function selectVar(btn, price){
+  btn.parentElement.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const dp = document.getElementById('dp');
+  if(dp) dp.textContent = price.toLocaleString();
+}
+
+function addCart(slug, name){
+  if(!SESSION){
+    toast('Please sign in to place an order.','info');
+    setTimeout(()=>goto('login'), 1500);
+    return;
+  }
+  toast(`${name} added to your order! 🎉`,'success');
+}
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+document.getElementById('login-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const email = document.getElementById('le').value.trim();
+  const pass = document.getElementById('lp').value;
+  const alert = document.getElementById('login-alert');
+  const btn = document.getElementById('l-btn');
+
+  if(!email||!pass){ showAlert(alert,'Please fill in all fields.','err'); return; }
+
+  setLoading(btn,'Signing in...');
+  hideAlert(alert);
+
+  setTimeout(()=>{
+    // Simulate auth — in real app this calls POST /api/auth/login
+    SESSION = {name: email.split('@')[0].replace(/[^a-zA-Z]/g,' ').trim()||'User', email};
+    localStorage.setItem('nexa_sess', JSON.stringify(SESSION));
+    updateNavAuth();
+    toast(`Welcome back! 👋`,'success');
+    resetBtn(btn,'Sign In');
+    goto('home');
+  }, 1200);
+});
+
+document.getElementById('signup-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('sn').value.trim();
+  const email = document.getElementById('se').value.trim();
+  const pass = document.getElementById('sp').value;
+  const cpass = document.getElementById('scp').value;
+  const alert = document.getElementById('signup-alert');
+  const btn = document.getElementById('s-btn');
+
+  if(!name||!email||!pass){ showAlert(alert,'Please fill in all fields.','err'); return; }
+  if(pass!==cpass){ showAlert(alert,'Passwords do not match.','err'); return; }
+  if(pass.length<6){ showAlert(alert,'Password must be at least 6 characters.','err'); return; }
+
+  setLoading(btn,'Creating account...');
+  hideAlert(alert);
+
+  setTimeout(()=>{
+    SESSION = {name, email};
+    localStorage.setItem('nexa_sess', JSON.stringify(SESSION));
+    updateNavAuth();
+    toast(`Welcome to Nexa, ${name.split(' ')[0]}! 🎉`,'success');
+    resetBtn(btn,'Create My Account');
+    goto('home');
+  }, 1400);
+});
+
+document.getElementById('contact-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('cn').value.trim();
+  const email = document.getElementById('ce').value.trim();
+  const msg = document.getElementById('cm').value.trim();
+  const alert = document.getElementById('c-alert');
+  const btn = document.getElementById('c-btn');
+
+  if(!name||!email||!msg){ showAlert(alert,'Please fill in all required fields.','err'); return; }
+
+  setLoading(btn,'Sending...');
+  hideAlert(alert);
+
+  setTimeout(()=>{
+    showAlert(alert,'✓ Message sent! We\'ll get back to you within 24 hours.','ok');
+    this.reset();
+    toast('Message sent successfully! 🚀','success');
+    resetBtn(btn,'<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Message');
+  }, 1200);
+});
+
+function signout(){
+  SESSION = null;
+  localStorage.removeItem('nexa_sess');
+  updateNavAuth();
+  toast('Signed out successfully.','success');
+}
+
+function togglePwd(id, btn){
+  const inp = document.getElementById(id);
+  const isText = inp.type==='text';
+  inp.type = isText ? 'password' : 'text';
+  btn.innerHTML = isText
+    ? `<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+    : `<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+}
+
+function updateStrength(inp){
+  const p = inp.value;
+  let s = 0;
+  if(p.length>=8)s++;if(/[A-Z]/.test(p))s++;if(/[0-9]/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;
+  const lvls=[['','transparent','0%'],['Weak','#f87171','25%'],['Fair','#fbbf24','50%'],['Good','#34d399','75%'],['Strong','#6c63ff','100%']];
+  const lv = lvls[Math.min(s,4)];
+  const bar = document.getElementById('str-bar');
+  const lbl = document.getElementById('str-lbl');
+  if(bar){ bar.style.width=lv[2]; bar.style.background=lv[1]; }
+  if(lbl){ lbl.textContent=lv[0]; lbl.style.color=lv[1]; }
+}
+
+/* ═══════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════ */
+function showAlert(el, msg, type){
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'alert a-'+type+' show';
+}
+function hideAlert(el){ if(el) el.className='alert'; }
+function setLoading(btn, txt){
+  btn.disabled=true;
+  btn.dataset.orig=btn.innerHTML;
+  btn.innerHTML=`<span style="width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin .8s linear infinite"></span> ${txt}`;
+}
+function resetBtn(btn, html){ btn.disabled=false; btn.innerHTML=html; }
+
+function toast(msg, type='success', dur=4000){
+  const c = document.getElementById('toasts');
+  const icons = {success:'✓',error:'✕',info:'ℹ'};
+  const t = document.createElement('div');
+  t.className = `toast t-${type==='success'?'ok':type==='error'?'err':'inf'}`;
+  t.innerHTML = `<span style="font-weight:800;font-size:1rem">${icons[type]||'•'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.animation='fadeIn .3s ease reverse both'; setTimeout(()=>t.remove(),300); }, dur);
+}
+
+/* ═══════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════ */
+function initReveal(){
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){ en.target.classList.add('vis'); obs.unobserve(en.target); }
+    });
+  }, {threshold:.1, rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.rev:not(.vis)').forEach(el=>obs.observe(el));
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+window.addEventListener('load', ()=>{
+  updateNavAuth();
+  initHomeProducts();
+  setTimeout(initReveal, 300);
+});
+
+document.addEventListener('scroll', ()=>{ initReveal(); }, {passive:true});
+</script>
+</body>
+</html>
